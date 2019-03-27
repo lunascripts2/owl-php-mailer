@@ -1,6 +1,6 @@
 # Owl PHPMailer
 
-PHP mailer script Many features in a single script.
+PHP mailer script with any features in a single file.
 
 Owl PHPMailer uses [PHPMailer](https://github.com/PHPMailer/PHPMailer) class 
 
