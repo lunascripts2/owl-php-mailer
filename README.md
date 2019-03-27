@@ -1,6 +1,6 @@
-# Project Title
+# Owl PHPMailer
 
-Owl PHPMailer is a PHP mailer script Many features in a single script.
+PHP mailer script Many features in a single script.
 
 Owl PHPMailer uses [PHPMailer](https://github.com/PHPMailer/PHPMailer) class 
 
