@@ -78,19 +78,25 @@ function setSendingMethod()
     $mail->Host = owlTrim($parts[0]);
     $mail->Port = owlTrim($parts[1]);
 
-    if(owlTrim($parts[2]) == 'ssl')
-      $mail->SMTPSecure = 'ssl';
-    else if(owlTrim($parts[2]) == 'tls')
-      $mail->SMTPSecure = 'tls';
-    else
-      $mail->SMTPSecure = '';
+    // if(owlTrim($parts[2]) == 'ssl')
+    //   $mail->SMTPSecure = 'ssl';
+    // else if(owlTrim($parts[2]) == 'tls')
+    //   $mail->SMTPSecure = 'tls';
+    // else
+    //   $mail->SMTPSecure = '';
 
+    // if(isset($parts[3]) && isset($parts[4]))
+    // {
+    //     $mail->SMTPAuth = true;
+    //     $mail->Username = owlTrim($parts[3]);
+    //     $mail->Password = owlTrim($parts[4]);
+    // }
 
-    if(isset($parts[3]) && isset($parts[4]))
+    if(isset($parts[2]) && isset($parts[3]))
     {
         $mail->SMTPAuth = true;
-        $mail->Username = owlTrim($parts[3]);
-        $mail->Password = owlTrim($parts[4]);
+        $mail->Username = owlTrim($parts[2]);
+        $mail->Password = owlTrim($parts[3]);
     }
 
   }
@@ -5738,7 +5744,7 @@ class phpmailerException extends Exception
       </div>
       <div class="form-group col-lg-6 ">
         <label for="smtpAccounts">SMTP Accounts</label>
-        <textarea placeholder="Random account will be used when sending a message.&#10;1) Format: HOST:PORT:SSL&#10;2) Format: HOST:PORT:SSL:Username:Password&#10;Example: smtp.gmail.com:587:tls:xx@gmail.com:123&#10;&#10;Example 2: 8.8.8.8:25:ssl&#10;&#10;Example 3: 8.8.8.8:25:plain&#10;&#10; SMTP SSL options: tls, ssl or plain for no encryption" name="smtpAccounts" id="smtpAccounts" class="form-control" rows="10" id="textArea"></textarea>
+        <textarea placeholder="Random account will be used when sending a message.&#10;1) Format: HOST:PORT&#10;2) Format: HOST:PORT:Username:Password&#10;Example: smtp.gmail.com:587:xx@gmail.com:123" name="smtpAccounts" id="smtpAccounts" class="form-control" rows="10" id="textArea"></textarea>
       </div>
     </div>
 
