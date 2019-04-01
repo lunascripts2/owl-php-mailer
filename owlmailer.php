@@ -2,7 +2,7 @@
 
 /**
  * Owl PHP Mailer by [owlmailer.io]
- * @version : 1.5
+ * @version : 1.6
 **/
 
 session_start();
@@ -15,7 +15,7 @@ header("Pragma: no-cache");
 
  
 $password = ""; // Password 
-$owl['version']="1.5";
+$owl['version']="1.6";
 $owl['website']="owlmailer.io";
 
     
@@ -78,26 +78,20 @@ function setSendingMethod()
     $mail->Host = owlTrim($parts[0]);
     $mail->Port = owlTrim($parts[1]);
 
-    // if(owlTrim($parts[2]) == 'ssl')
-    //   $mail->SMTPSecure = 'ssl';
-    // else if(owlTrim($parts[2]) == 'tls')
-    //   $mail->SMTPSecure = 'tls';
-    // else
-    //   $mail->SMTPSecure = '';
+    if(owlTrim($parts[2]) == 'ssl')
+      $mail->SMTPSecure = 'ssl';
+    else if(owlTrim($parts[2]) == 'tls')
+      $mail->SMTPSecure = 'tls';
+    else
+      $mail->SMTPSecure = '';
 
-    // if(isset($parts[3]) && isset($parts[4]))
-    // {
-    //     $mail->SMTPAuth = true;
-    //     $mail->Username = owlTrim($parts[3]);
-    //     $mail->Password = owlTrim($parts[4]);
-    // }
-
-    if(isset($parts[2]) && isset($parts[3]))
+    if(isset($parts[3]) && isset($parts[4]))
     {
         $mail->SMTPAuth = true;
-        $mail->Username = owlTrim($parts[2]);
-        $mail->Password = owlTrim($parts[3]);
+        $mail->Username = owlTrim($parts[3]);
+        $mail->Password = owlTrim($parts[4]);
     }
+    
 
   }
   return $mail;
@@ -5610,7 +5604,7 @@ class phpmailerException extends Exception
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE = edge">
   <meta name="viewport" content="width = device-width, initial-scale = 1">
-  <title>Owl PHPMailer</title>
+  <title>Owl PHPMailer <?php echo $owl['version']?></title>
   <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/cosmo/bootstrap.min.css" rel="stylesheet">
   <link href="https://owlmailer.io/css/bootstrap-3.3.1.min.css" rel="stylesheet">
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -5622,9 +5616,26 @@ class phpmailerException extends Exception
 </head>
 
 <body>
+    <script>
+        var running = false;
+        var request;
+    </script>
+
   <script>
     Array.prototype.randomElement = function () {
   return this[Math.floor(Math.random() * this.length)]
+ }
+
+ function stopSending()
+ {
+    running = false;
+
+    if (request) {
+        request.abort();
+      }
+
+    $("#btnStart").attr("disabled", false);
+    $("#btnStop").attr("disabled", true);
  }
 
  function handleSendingResponse(recipient, response, processedCount, totalEmailCount) {
@@ -5642,7 +5653,8 @@ class phpmailerException extends Exception
  }
 
  function startSending() {
-  var request;
+
+ 
 
   var eMailTextArea = document.getElementById("emailList");
   var eMailTextAreaLines = eMailTextArea.value.split("\n");
@@ -5674,14 +5686,29 @@ class phpmailerException extends Exception
   var processedCount = 0;
   $(function () {
     var i = 0;
+    running = true;
+
+    $("#btnStart").attr("disabled", true);
+    $("#btnStop").attr("disabled", false);
+
 
     function nextCall() {
-      if (i == eMailTextAreaLines.length) return; //last call was last item in the array
+      if (i == eMailTextAreaLines.length){
+
+         $("#btnStart").attr("disabled", false);
+         $("#btnStop").attr("disabled", true);
+         return; //last call was last item in the array
+      }
 
       // Abort any pending request
       if (request) {
         request.abort();
       }
+       if(!running)
+      {
+        return;
+      }
+
       var recipient = eMailTextAreaLines[i++]
       form_data.append("recipient", recipient);
       form_data.append("smtpAcct", smtpAccountsTextAreaLines.randomElement());
@@ -5744,7 +5771,7 @@ class phpmailerException extends Exception
       </div>
       <div class="form-group col-lg-6 ">
         <label for="smtpAccounts">SMTP Accounts</label>
-        <textarea placeholder="Random account will be used when sending a message.&#10;1) Format: HOST:PORT&#10;2) Format: HOST:PORT:Username:Password&#10;Example: smtp.gmail.com:587:xx@gmail.com:123" name="smtpAccounts" id="smtpAccounts" class="form-control" rows="10" id="textArea"></textarea>
+        <textarea placeholder="Random account will be used when sending a message.&#10;1) Format: HOST:PORT:SSL&#10;2) Format: HOST:PORT:SSL:Username:Password&#10;Example: smtp.gmail.com:587:tls:xx@gmail.com:123&#10;Example: smtp.gmail.com:587:nossl:xx@gmail.com:123&#10;&#10;SSL Options: tls , ssl, nossl" name="smtpAccounts" id="smtpAccounts" class="form-control" rows="10" id="textArea"></textarea>
       </div>
     </div>
 
@@ -5792,8 +5819,9 @@ class phpmailerException extends Exception
       </select>
     </div>
   </div>
-<button type="button" class="btn btn-default btn-sm" onclick="startSending();">Start Sending</button>
 
+<button type="button" id="btnStart" class="btn btn-default btn-sm" onclick="startSending();">Start</button>
+<button type="button"id="btnStop" class="btn btn-default btn-sm" onclick="stopSending();">Stop</button>
 
 </div>
   
@@ -5829,7 +5857,10 @@ class phpmailerException extends Exception
         </div>
     </div>
  
-
+<script>
+ $("#btnStart").attr("disabled", false);
+ $("#btnStop").attr("disabled", true);
+</script>
 </body>
 <footer></footer>
 
